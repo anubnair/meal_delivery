@@ -1,0 +1,7 @@
+DB:
+    - name: mysql
+      user: root
+      host: localhost
+      password: welcome1
+      port: 3306
+      db: mydb
