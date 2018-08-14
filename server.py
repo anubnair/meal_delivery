@@ -381,6 +381,75 @@ def update_emp_information(emp_name, food_tag,
     return return_data
 
 
+
+def update_res_information(res_name, category,
+                            menu_id, event,
+                            db, old_res_name=None):
+    """
+    Update restaurant info to DB
+    Args:
+        res_name: restaurant name
+        category: food category of a restaurant
+        menu_id: menu id
+        event: add,remove,edit restaurant
+        db: db object
+        old_res_name: old restaurant name(for update)
+    Returns:
+        data: curresponding result
+    """
+    try:
+        return_data = {}
+
+        if event == 'add':
+            query = ("INSERT INTO restaurant_table (res_id, res_name, " + \
+                                "category, menu_id) " + \
+    			                 'VALUES (%s, "%s", "%s", "%s")' \
+                                 %  ("default", res_name,
+                                     category, menu_id)
+                    )
+            print(query)
+            utils.write_to_mysql(db, query)
+            return_data = {
+                            "restaurant": {
+                                        "event": event,
+                                        "status":"success"
+                                    }
+                        }
+        if event == 'delete':
+            query = ("DELETE from restaurant_table WHERE res_name='%s'; "
+                        % (str(res_name)))
+
+            print(query)
+            utils.write_to_mysql(db, query)
+            return_data = {
+                            "restaurant": {
+                                        "event": event,
+                                        "status":"success"
+                                    }
+                        }
+        if event == 'edit':
+            query = ("UPDATE restaurant_table SET res_name='%s', category='%s',"
+                                % (res_name, category)
+                                + "menu_id=%s " % (menu_id)
+                                + "WHERE res_name = '%s'" % (old_res_name))
+
+            print(query)
+            utils.write_to_mysql(db, query)
+            return_data = {
+                            "restaurant": {
+                                        "event": event,
+                                        "status":"success"
+                                    }
+                        }
+    except Exception as e:
+        return_data = {
+                        "restaurant": {
+                                    "event": event,
+                                    "status":"fail"
+                                }
+                    }
+    return return_data
+
 class Menu(tornado.web.RequestHandler):
     @authentication_required
     @tornado.web.asynchronous
@@ -445,6 +514,94 @@ class Employee(tornado.web.RequestHandler):
             self.write(json.dumps(out))
             self.finish()
 
+
+class Restaurant(tornado.web.RequestHandler):
+    @authentication_required
+    @tornado.web.asynchronous
+    @gen.engine
+    def post(self, decoded):
+        """
+        API to add/remove/edit restaurant
+        """
+        res_name = self.get_argument('res_name')
+        category = self.get_argument('category')
+        menu_id = self.get_argument('menu_id')
+        event = self.get_argument('event')
+
+        if event == 'edit':
+            old_res_name = self.get_argument('old_res_name')
+            out = update_res_information(res_name, category,
+                                        menu_id, event,
+                                        self.settings['db'],old_res_name)
+        else:
+            out = update_res_information(res_name, category,
+                                        menu_id, event,
+                                        self.settings['db'])
+
+        if out['restaurant']['status'] == 'fail':
+            self.set_status(400)
+            self.finish(out)
+        else:
+            self.write(json.dumps(out))
+            self.finish()
+
+
+class Random_lunch(tornado.web.RequestHandler):
+    @authentication_required
+    @tornado.web.asynchronous
+    @gen.engine
+    def post(self, decoded):
+        """
+        API to schedule a “Random Lunch” for multiple employees
+        """
+        team_id = self.get_argument('team_id')
+        # get all employee with the team_id
+        query = ("SELECT * from employee_table "
+                                + "WHERE team_id = %s" % (team_id))
+        db = self.settings['db']
+        cursor = db.cursor()
+        cursor.execute(query)
+        result = cursor.fetchall()
+
+        if not result:
+            return_data = {
+                            "random_lunch": {
+                                        "result": None,
+                                        "status":"fail"
+                                    }
+                        }
+        else:
+            category_list =[]
+            for res in result:
+                if res[2] not in category_list:
+                    category_list.append(res[2])
+            query = ("SELECT * from restaurant_table WHERE")
+            cat_count = 0
+            for cat in category_list:
+                if cat_count:
+                    query += " and category =  '%s'" % (cat)
+                else:
+                    query += " category = '%s'" % (cat)
+
+            print(query)
+            db = self.settings['db']
+            cursor = db.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()
+            return_data = {
+                        "random_lunch": {
+                                    "result": result,
+                                    "status":"success"
+                                }
+                    }
+
+        if return_data['random_lunch']['status'] == 'fail':
+            self.set_status(400)
+            self.finish(out)
+        else:
+            self.write(json.dumps(return_data))
+            self.finish()
+
 configuraion = utils.read_from_configuration('config.yaml')
 db = utils.get_db_connection(configuraion)
 
@@ -453,6 +610,8 @@ application = tornado.web.Application([
     (r"/menu", Menu),
     (r"/team", Team),
     (r"/employee", Employee),
+    (r"/restaurant", Restaurant),
+    (r"/random_lunch", Random_lunch),
 ], db=db)
 
 if __name__ == "__main__":
