@@ -54,6 +54,26 @@ Delete Team:
 python2 client.py -t "{'team_name':'data_science', 'event': 'delete'}"
 
 response: 200 {"team": {"status": "success", "event": "delete"}}
+
+
+Add Employee:
+-------------
+python2 client.py -e "{'emp_name':'anu', 'food_tag': 'VEG', 'team_name': 'data_science', 'team_id':1, 'event': 'add'}"
+
+response 200 {"employee": {"status": "success", "event": "add"}}
+
+Delete Employee:
+---------------
+python2 client.py -e "{'emp_name':'anu', 'food_tag': 'VEG', 'team_name': 'data_science', 'team_id':1, 'event': 'delete'}"
+
+response 200 {"employee": {"status": "success", "event": "delete"}}
+
+Edit Employee:
+-------------
+python2 client.py -e "{'emp_name':'anu', 'food_tag': 'VEG', 'team_name': 'data_science', 'team_id':1, 'event': 'edit', 'old_team_name': 'data_science'}"
+
+response 200 {"employee": {"status": "success", "event": "edit"}}
+
 Sample Nose Test:
 ------------------
 $cd tests

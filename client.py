@@ -49,6 +49,32 @@ def team(arg):
     response = conn.getresponse()
     print(response.status, response.read())
 
+
+def employee(arg):
+    json_acceptable_string = arg.replace("'", "\"")
+    arg = json.loads(json_acceptable_string)
+    if arg['event'] == 'edit':
+        params = urllib.urlencode({'key': key, 'emp_name': arg['emp_name'],
+                                   'food_tag': arg['food_tag'],
+                                   'team_name': arg['team_name'],
+                                   'team_id': arg['team_id'],
+                                   'old_team_name': arg['old_team_name'],
+                                   'event': arg['event']})
+    else:
+        params = urllib.urlencode({'key': key, 'emp_name': arg['emp_name'],
+                                   'food_tag': arg['food_tag'],
+                                   'team_name': arg['team_name'],
+                                   'team_id': arg['team_id'],
+                                   'event': arg['event']})
+
+    headers = {"Content-type": "application/x-www-form-urlencoded",
+               "Accept": "text/plain"}
+    conn = httplib.HTTPConnection("localhost", 8888)
+    conn.request("POST", "/employee", params, headers)
+    response = conn.getresponse()
+    print(response.status, response.read())
+
+
 if __name__ == '__main__':
 
     parser = optparse.OptionParser(usage="usage: %prog [options] filename",
@@ -61,9 +87,15 @@ if __name__ == '__main__':
                       dest="team",
                       help='add / delete team',)
 
+    parser.add_option('-e', '--employee',
+                      dest="employee",
+                      help='add / update, delete team',)
+
     (options, args) = parser.parse_args()
 
     if options.menu:
         menu(options.menu)
     if options.team:
         team(options.team)
+    if options.employee:
+        employee(options.employee)

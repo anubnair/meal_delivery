@@ -117,7 +117,6 @@ def add_menu(item_name, price, category, db):
     """
     try:
         return_data = {}
-        data_to_store = {}
         query = ('INSERT INTO menu_table (menu_id, item_name, price,' + \
                                  'category) ' + \
                                  'VALUES (%s, "%s", "%s", "%s")' \
@@ -155,7 +154,6 @@ def edit_menu(item_name, old_item_name, price, category, db):
     """
     try:
         return_data = {}
-        data_to_store = {}
         query = ("UPDATE menu_table SET item_name='%s', price=%s,"
                                 % (item_name, str(price))
                                 + "category='%s' " % (category)
@@ -191,8 +189,6 @@ def remove_menu(item_name, price, category, db):
     """
     try:
         return_data = {}
-        data_to_store = {}
-
         query = ("DELETE from menu_table WHERE item_name='%s' AND price=%s" \
     			     % (str(item_name), str(price)) \
                                  + " AND category='%s'; " % (str(category)))
@@ -225,7 +221,6 @@ def add_or_remove_team(team_name, event, db):
     """
     try:
         return_data = {}
-        data_to_store = {}
         if event == 'add':
             query = ("INSERT INTO team_table (team_id, team_name) "+ \
     			                 'VALUES (%s, "%s")' \
@@ -302,15 +297,148 @@ class Team(tornado.web.RequestHandler):
         """
         API to add/remove a new Team
         """
-        print("Came here")
         team_name = self.get_argument('team_name')
         event = self.get_argument('event')
 
         out = add_or_remove_team(team_name, event,
                            self.settings['db'])
 
-        print(out)
         if out['team']['status'] == 'fail':
+            self.set_status(400)
+            self.finish(out)
+        else:
+            self.write(json.dumps(out))
+            self.finish()
+
+
+def update_emp_information(emp_name, food_tag,
+                            team_id, team_name, event,
+                            db, old_team_name=None):
+    """
+    Update employee info to DB
+    Args:
+        emp_name: employee name
+        food_tag: food category of an employee
+        team_id: team_id of the Employee
+        team_name: team name
+        event: add,remove,edit information of employee
+        db: db object
+    Returns:
+        data: curresponding result
+    """
+    try:
+        return_data = {}
+
+        if event == 'add':
+            query = ("INSERT INTO employee_table (id, emp_name, food_tag," +
+                                "team_id, team_name) "+ \
+    			                 'VALUES (%s, "%s", "%s", %s, "%s")' \
+                                 %  ("default", emp_name,
+                                     food_tag, team_id, team_name)
+                    )
+            print(query)
+            utils.write_to_mysql(db, query)
+            return_data = {
+                            "employee": {
+                                        "event": event,
+                                        "status":"success"
+                                    }
+                        }
+        if event == 'delete':
+            query = ("DELETE from employee_table WHERE emp_name='%s'; "
+                        % (str(emp_name)))
+
+            print(query)
+            utils.write_to_mysql(db, query)
+            return_data = {
+                            "employee": {
+                                        "event": event,
+                                        "status":"success"
+                                    }
+                        }
+        if event == 'edit':
+            query = ("UPDATE employee_table SET emp_name='%s', food_tag='%s',"
+                                % (emp_name, food_tag)
+                                + "team_name='%s', " % (team_name)
+                                + "team_id=%s " % (team_id)
+                                + "WHERE    team_name = '%s'" % (old_team_name))
+
+            print(query)
+            utils.write_to_mysql(db, query)
+            return_data = {
+                            "employee": {
+                                        "event": event,
+                                        "status":"success"
+                                    }
+                        }
+    except Exception as e:
+        return_data = {
+                        "employee": {
+                                    "event": event,
+                                    "status":"fail"
+                                }
+                    }
+    return return_data
+
+
+class Menu(tornado.web.RequestHandler):
+    @authentication_required
+    @tornado.web.asynchronous
+    @gen.engine
+    def post(self, decoded):
+        """
+        API to add/remove/edit the Menu
+        """
+        item_name = self.get_argument('item_name')
+        price = self.get_argument('price')
+        category = self.get_argument('category')
+        event = self.get_argument('event')
+
+        if event == 'add':
+            out = add_menu(item_name, price, category,
+                           self.settings['db'])
+        elif event == 'remove':
+            out = remove_menu(item_name, price, category,
+                           self.settings['db'])
+        elif event == 'edit':
+            old_item_name = self.get_argument('old_item_name')
+            out = edit_menu(item_name, old_item_name,
+                            price, category,
+                            self.settings['db'])
+
+        if out['menu']['status'] == 'fail':
+            self.set_status(400)
+            self.finish(out)
+        else:
+            self.write(json.dumps(out))
+            self.finish
+
+
+class Employee(tornado.web.RequestHandler):
+    @authentication_required
+    @tornado.web.asynchronous
+    @gen.engine
+    def post(self, decoded):
+        """
+        API to add/remove/edit employee information
+        """
+        emp_name = self.get_argument('emp_name')
+        food_tag = self.get_argument('food_tag')
+        team_id = self.get_argument('team_id')
+        team_name = self.get_argument('team_name')
+        event = self.get_argument('event')
+
+        if event == 'edit':
+            old_team_name = self.get_argument('old_team_name')
+            out = update_emp_information(emp_name, food_tag,
+                                        team_id, team_name, event,
+                                        self.settings['db'],old_team_name)
+        else:
+            out = update_emp_information(emp_name, food_tag,
+                                        team_id, team_name, event,
+                                        self.settings['db'])
+
+        if out['employee']['status'] == 'fail':
             self.set_status(400)
             self.finish(out)
         else:
@@ -324,6 +452,7 @@ application = tornado.web.Application([
     (r"/", MainHandler),
     (r"/menu", Menu),
     (r"/team", Team),
+    (r"/employee", Employee),
 ], db=db)
 
 if __name__ == "__main__":
