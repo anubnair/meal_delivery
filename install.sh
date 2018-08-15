@@ -5,7 +5,7 @@ pip install PyJWT
 sudo pip install nose
 
 sudo apt-get install python3-mysql.connector
-sudo pip3 install pyyaml
+sudo pip install pyyaml
 
 # mysql installation
 
