@@ -1,10 +1,4 @@
-Meal Delivery
-
-Author: Anu B Nair <anubnair90@gmail.com>
-
-About:
-------
-
+# Meal Delivery
 
 +-----------------------------+     Response         +-----------------------+
 |        WebServer(Tornado)   <------------------+   |         Client        |
@@ -22,8 +16,6 @@ About:
 +---------------------+
 
 
-
-----------------------------------------------
 This application is to manage the meal delivery of staff....
 
 Installation:
