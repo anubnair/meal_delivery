@@ -131,6 +131,7 @@ def add_menu(item_name, price, category, db):
                                     "status":"success"
                                 }
                     }
+        print(return_data)
     except Exception as e:
         return_data = {
                         "menu": {
@@ -270,8 +271,10 @@ class Menu(tornado.web.RequestHandler):
         event = self.get_argument('event')
 
         if event == 'add':
+            print("%%%%%%%%%%%%%%%%%%%%%55")
             out = add_menu(item_name, price, category,
                            self.settings['db'])
+            print('*********111111111111*****')
         elif event == 'remove':
             out = remove_menu(item_name, price, category,
                            self.settings['db'])
@@ -280,13 +283,13 @@ class Menu(tornado.web.RequestHandler):
             out = edit_menu(item_name, old_item_name,
                             price, category,
                             self.settings['db'])
-
+        print(out)
         if out['menu']['status'] == 'fail':
-            self.set_status(400)
+            self.set_statusmenu(400)
             self.finish(out)
         else:
             self.write(json.dumps(out))
-            self.finish
+            self.finish()
 
 
 class Team(tornado.web.RequestHandler):
@@ -449,38 +452,6 @@ def update_res_information(res_name, category,
                                 }
                     }
     return return_data
-
-class Menu(tornado.web.RequestHandler):
-    @authentication_required
-    @tornado.web.asynchronous
-    @gen.engine
-    def post(self, decoded):
-        """
-        API to add/remove/edit the Menu
-        """
-        item_name = self.get_argument('item_name')
-        price = self.get_argument('price')
-        category = self.get_argument('category')
-        event = self.get_argument('event')
-
-        if event == 'add':
-            out = add_menu(item_name, price, category,
-                           self.settings['db'])
-        elif event == 'remove':
-            out = remove_menu(item_name, price, category,
-                           self.settings['db'])
-        elif event == 'edit':
-            old_item_name = self.get_argument('old_item_name')
-            out = edit_menu(item_name, old_item_name,
-                            price, category,
-                            self.settings['db'])
-
-        if out['menu']['status'] == 'fail':
-            self.set_status(400)
-            self.finish(out)
-        else:
-            self.write(json.dumps(out))
-            self.finish
 
 
 class Employee(tornado.web.RequestHandler):

@@ -37,7 +37,6 @@ def menu(arg):
 
 
 def team(arg):
-
     json_acceptable_string = arg.replace("'", "\"")
     arg = json.loads(json_acceptable_string)
     params = urllib.urlencode({'key': key, 'team_name': arg['team_name'],
