@@ -145,3 +145,6 @@ Sample Nose Test:
 $cd tests
 $nosetests .
 
+Create DB:
+----------
+mysql -u root mydb < db_skel.sql 

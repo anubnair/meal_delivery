@@ -4,7 +4,7 @@ pip install tornado
 pip install PyJWT
 sudo pip install nose
 
-sudo apt-get install python3-mysql.connector
+sudo apt-get install python-mysql.connector
 sudo pip install pyyaml
 
 # mysql installation

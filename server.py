@@ -27,7 +27,6 @@ import datetime
 import json
 import utils
 import settings
-from pymongo import MongoClient
 from bson import json_util
 
 
