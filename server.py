@@ -271,10 +271,8 @@ class Menu(tornado.web.RequestHandler):
         event = self.get_argument('event')
 
         if event == 'add':
-            print("%%%%%%%%%%%%%%%%%%%%%55")
             out = add_menu(item_name, price, category,
                            self.settings['db'])
-            print('*********111111111111*****')
         elif event == 'remove':
             out = remove_menu(item_name, price, category,
                            self.settings['db'])
@@ -283,7 +281,6 @@ class Menu(tornado.web.RequestHandler):
             out = edit_menu(item_name, old_item_name,
                             price, category,
                             self.settings['db'])
-        print(out)
         if out['menu']['status'] == 'fail':
             self.set_statusmenu(400)
             self.finish(out)
