@@ -1,21 +1,5 @@
 # Meal Delivery
 
-+-----------------------------+     Response         +-----------------------+
-|        WebServer(Tornado)   <------------------+   |         Client        |
-|                             +----------------->    |                       |
-+-----^-----------------------+     Request          +-----------------------+
-      ||
-      ||
-      ||
-      ||
-      ||
-      ||
-+------v--------------+
-|                     |
-|      Mysql(DB)      |
-+---------------------+
-
-
 This application is to manage the meal delivery of staff....
 
 Installation:
@@ -26,11 +10,7 @@ $sudo ./install.sh
 How to use:
 -----------
 
-Terminal 1: 
-------------
-$python server.py   
-
-Terminal 2:
+Terminal 1:
 ------------
 Running client for API validation:
 

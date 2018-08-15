@@ -7,7 +7,7 @@ params = urllib.urlencode({'username': 'admin', 'password': 'iamadmin'})
 
 headers = {"Content-type": "application/x-www-form-urlencoded",
            "Accept": "text/plain"}
-conn = httplib.HTTPConnection("localhost", 8888)
+conn = httplib.HTTPConnection("104.155.154.158", 8080)
 
 conn.request("POST", "/", params, headers)
 response = conn.getresponse()
@@ -30,7 +30,7 @@ def menu(arg):
                                    'event': arg['event']})
     headers = {"Content-type": "application/x-www-form-urlencoded",
                "Accept": "text/plain"}
-    conn = httplib.HTTPConnection("localhost", 8888)
+    conn = httplib.HTTPConnection("104.155.154.158", 8080)
     conn.request("POST", "/menu", params, headers)
     response = conn.getresponse()
     print(response.status, response.read())
@@ -43,7 +43,7 @@ def team(arg):
                                    'event': arg['event']})
     headers = {"Content-type": "application/x-www-form-urlencoded",
                "Accept": "text/plain"}
-    conn = httplib.HTTPConnection("localhost", 8888)
+    conn = httplib.HTTPConnection("104.155.154.158", 8080)
     conn.request("POST", "/team", params, headers)
     response = conn.getresponse()
     print(response.status, response.read())
@@ -68,7 +68,7 @@ def employee(arg):
 
     headers = {"Content-type": "application/x-www-form-urlencoded",
                "Accept": "text/plain"}
-    conn = httplib.HTTPConnection("localhost", 8888)
+    conn = httplib.HTTPConnection("104.155.154.158", 8080)
     conn.request("POST", "/employee", params, headers)
     response = conn.getresponse()
     print(response.status, response.read())
@@ -91,7 +91,7 @@ def restaurant(arg):
 
     headers = {"Content-type": "application/x-www-form-urlencoded",
                "Accept": "text/plain"}
-    conn = httplib.HTTPConnection("localhost", 8888)
+    conn = httplib.HTTPConnection("104.155.154.158", 8080)
     conn.request("POST", "/restaurant", params, headers)
     response = conn.getresponse()
     print(response.status, response.read())
@@ -103,7 +103,7 @@ def random_lunch(arg):
     params = urllib.urlencode({'key': key, 'team_id': arg['team_id']})
     headers = {"Content-type": "application/x-www-form-urlencoded",
                "Accept": "text/plain"}
-    conn = httplib.HTTPConnection("localhost", 8888)
+    conn = httplib.HTTPConnection("104.155.154.158", 8080)
     conn.request("POST", "/random_lunch", params, headers)
     response = conn.getresponse()
     print(response.status, response.read())
@@ -116,7 +116,7 @@ def paid_lunch(arg):
                                 'total_budget': arg['total_budget']})
     headers = {"Content-type": "application/x-www-form-urlencoded",
                "Accept": "text/plain"}
-    conn = httplib.HTTPConnection("localhost", 8888)
+    conn = httplib.HTTPConnection("104.155.154.158", 8080)
     conn.request("POST", "/paid_lunch", params, headers)
     response = conn.getresponse()
     print(response.status, response.read())
@@ -128,7 +128,7 @@ def get_teams(arg):
     params = urllib.urlencode({'key': key})
     headers = {"Content-type": "application/x-www-form-urlencoded",
                "Accept": "text/plain"}
-    conn = httplib.HTTPConnection("localhost", 8888)
+    conn = httplib.HTTPConnection("104.155.154.158", 8080)
     conn.request("GET", "/get_teams", params, headers)
     response = conn.getresponse()
     print(response.status, response.read())
@@ -140,7 +140,7 @@ def get_employees(arg):
     params = urllib.urlencode({'key': key})
     headers = {"Content-type": "application/x-www-form-urlencoded",
                "Accept": "text/plain"}
-    conn = httplib.HTTPConnection("localhost", 8888)
+    conn = httplib.HTTPConnection("104.155.154.158", 8080)
     conn.request("GET", "/get_employees", params, headers)
     response = conn.getresponse()
     print(response.status, response.read())
@@ -152,7 +152,7 @@ def get_restaurants(arg):
     params = urllib.urlencode({'key': key})
     headers = {"Content-type": "application/x-www-form-urlencoded",
                "Accept": "text/plain"}
-    conn = httplib.HTTPConnection("localhost", 8888)
+    conn = httplib.HTTPConnection("104.155.154.158", 8080)
     conn.request("GET", "/get_restaurants", params, headers)
     response = conn.getresponse()
     print(response.status, response.read())
