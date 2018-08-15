@@ -1,25 +1,3 @@
-query = ('INSERT INTO menu_table (menu_id, item_name, price,' + \
-                                 'category) ' + \
-                                 'VALUES (%s, "%s", "%s", "%s")' \
-                                    % ("default", item_name, str(price), \
-                                        category)
-                                )
-
-
-INSERT INTO menu_table WHERE (team_id, team_name) VALUES (default, 'data_science');
-
-
-
-
-INSERT INTO `team_table` (`team_id`, `team_name`) VALUES (default,'DATA_SCIENCE');
-SELECT * from team_table;
-
-INSERT INTO `team_table` (`team_id`, `team_name`) VALUES (default,'DATA_SCIENCE');
-
-INSERT INTO `employee_table` (`ID`, `NAME`, `FOOD_TAG`, `TEAM_ID`) VALUES (default,'ANU', 'VEG', 22);
-
-SELECT * from employee_table;
-
 -- MySQL Workbench Forward Engineering
 
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
@@ -52,14 +30,14 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`employee_table` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(100) NOT NULL,
+  `emp_name` VARCHAR(100) NOT NULL,
   `food_tag` VARCHAR(45) NOT NULL,
-  `team_id` INT(11) NULL DEFAULT NULL,
-  `team_table_team_id` INT(11) NOT NULL,
+  `team_name` VARCHAR(45) NULL,
+  `team_id` INT(11) NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_employee_table_team_table1_idx` (`team_table_team_id` ASC),
+  INDEX `fk_employee_table_team_table1_idx` (`team_id` ASC),
   CONSTRAINT `fk_employee_table_team_table1`
-    FOREIGN KEY (`team_table_team_id`)
+    FOREIGN KEY (`team_id`)
     REFERENCES `mydb`.`team_table` (`team_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
@@ -88,11 +66,11 @@ CREATE TABLE IF NOT EXISTS `mydb`.`order_table` (
   `employee_id` INT(11) NULL DEFAULT NULL,
   `category` VARCHAR(45) NULL DEFAULT NULL,
   `order_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `menu_table_menu_id` INT(11) NOT NULL,
+  `menu_id` INT(11) NOT NULL,
   PRIMARY KEY (`order_id`),
-  INDEX `fk_order_table_menu_table1_idx` (`menu_table_menu_id` ASC),
+  INDEX `fk_order_table_menu_table1_idx` (`menu_id` ASC),
   CONSTRAINT `fk_order_table_menu_table1`
-    FOREIGN KEY (`menu_table_menu_id`)
+    FOREIGN KEY (`menu_id`)
     REFERENCES `mydb`.`menu_table` (`menu_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
@@ -107,12 +85,11 @@ CREATE TABLE IF NOT EXISTS `mydb`.`restaurant_table` (
   `res_id` INT(11) NOT NULL AUTO_INCREMENT,
   `res_name` VARCHAR(145) NOT NULL,
   `category` VARCHAR(45) NOT NULL,
-  `menu_id` INT(11) NULL DEFAULT NULL,
-  `menu_table_menu_id` INT(11) NOT NULL,
+  `menu_id` INT(11) NOT NULL,
   PRIMARY KEY (`res_id`),
-  INDEX `fk_restaurant_table_menu_table1_idx` (`menu_table_menu_id` ASC),
+  INDEX `fk_restaurant_table_menu_table1_idx` (`menu_id` ASC),
   CONSTRAINT `fk_restaurant_table_menu_table1`
-    FOREIGN KEY (`menu_table_menu_id`)
+    FOREIGN KEY (`menu_id`)
     REFERENCES `mydb`.`menu_table` (`menu_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
