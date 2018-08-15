@@ -98,6 +98,32 @@ python2 client.py -l "{'team_id':1}"
 
 response 200 {"random_lunch": {"status": "success", "result": [[4, "Anu", "VEG", 4], [5, "Anoop", "VEG", 4]]}}
 
+Paid Lunch:
+-----------
+python2 client.py -p "{'team_id':1, 'total_budget': 10}"
+
+response 200 {"random_lunch": {"status": "success", "result": {"menu": [[4, "rice", 10, "VEG"], [5, "rice", 10, "VEG"], [6, "rice", 10, "VEG"], [7, "rice", 10, "VEG"], [8, "rice", 10, "VEG"], [9, "rice", 10, "VEG"], [10, "rice", 10, "VEG"], [11, "rice", 10, "VEG"], [12, "rice", 10, "VEG"], [13, "rice", 10, "VEG"], [14, "rice", 10, "VEG"], [15, "rice", 10, "VEG"], [16, "rice", 10, "VEG"], [17, "rice", 10, "VEG"], [18, "rice", 10, "VEG"], [19, "rice", 10, "VEG"]], "restaurant": [[4, "Anu", "VEG", 4], [5, "Anoop", "VEG", 4]]}}}
+
+Get Teams:
+----------
+python2 client.py --get_teams "{'event': 'get_teams'}"
+
+response 200 {"get_teams": {"status": "success", "result": [[1, "data_science"]]}}`
+
+Get Employees:
+-------------
+python2 client.py --get_employees "{'event': 'get_employees'}"
+
+response 200 {"get_employees": {"status": "success", "result": [[2, "anu", "VEG", "data_science", 1], [3, "anp", "VEG", "data_science", 1], [4, "deepu", "VEG", "data_science", 1], [5, "namratha", "VEGAN", "data_science", 1]]}}
+
+Get Restaurants:
+----------------
+
+python2 client.py --get_restaurants "{'event': 'get_restaurants'}"
+
+response 200 {"get_restaurants": {"status": "success", "result": [[4, "Anu", "VEG", 4], [5, "Anoop", "VEG", 4]]}}
+
+
 Sample Nose Test:
 ------------------
 $cd tests

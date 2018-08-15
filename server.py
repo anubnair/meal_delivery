@@ -547,9 +547,10 @@ class Random_lunch(tornado.web.RequestHandler):
             cat_count = 0
             for cat in category_list:
                 if cat_count:
-                    query += " and category =  '%s'" % (cat)
+                    query += " or category =  '%s'" % (cat)
                 else:
                     query += " category = '%s'" % (cat)
+                cat_count += 1
 
             print(query)
             db = self.settings['db']
@@ -570,6 +571,187 @@ class Random_lunch(tornado.web.RequestHandler):
             self.write(json.dumps(return_data))
             self.finish()
 
+class Paid_lunch(tornado.web.RequestHandler):
+    @authentication_required
+    @tornado.web.asynchronous
+    @gen.engine
+    def post(self, decoded):
+        """
+        API to schedule a “Paid Lunch” for multiple employees
+        """
+
+        team_id = self.get_argument('team_id')
+        total_budget = self.get_argument('total_budget')
+        # get all employee with the team_id
+        query = ("SELECT * from employee_table "
+                                + "WHERE team_id = %s" % (team_id))
+        db = self.settings['db']
+        cursor = db.cursor()
+        cursor.execute(query)
+        result = cursor.fetchall()
+
+        if not result:
+            return_data = {
+                            "paid_lunch": {
+                                        "result": None,
+                                        "status":"fail"
+                                    }
+                        }
+        else:
+            individual_price = int(total_budget)/len(result)
+            category_list =[]
+            for res in result:
+                if res[2] not in category_list:
+                    category_list.append(res[2])
+            query = ("SELECT * from menu_table WHERE")
+            cat_count = 0
+            for cat in category_list:
+                if cat_count:
+                    query += " or category =  '%s'" % (cat)
+                else:
+                    query += " category = '%s'" % (cat)
+                cat_count += 1
+
+            query += " and price<=%s" % (individual_price)
+
+            db = self.settings['db']
+            cursor = db.cursor()
+            cursor.execute(query)
+            avail_menu = cursor.fetchall()
+
+            list_menu_id = []
+            for menu in avail_menu:
+                list_menu_id.append(menu[0])
+            string_menu_id = ','.join(str(v) for v in list_menu_id)
+            # find available restaurant
+            query = ("SELECT * from restaurant_table WHERE menu_id in (%s)"
+                        % (string_menu_id))
+            db = self.settings['db']
+            cursor = db.cursor()
+            cursor.execute(query)
+            list_restaurant = cursor.fetchall()
+
+            return_data = {
+                        "random_lunch": {
+                                    "result": {"menu": avail_menu,
+                                                "restaurant": list_restaurant},
+                                    "status":"success"
+                                }
+                    }
+
+        if return_data['random_lunch']['status'] == 'fail':
+            self.set_status(400)
+            self.finish(out)
+        else:
+            self.write(json.dumps(return_data))
+            self.finish()
+
+
+class Get_Teams(tornado.web.RequestHandler):
+    @authentication_required
+    @tornado.web.asynchronous
+    @gen.engine
+    def get(self, decoded):
+        """
+        API to get Team details
+        """
+        query = ("SELECT * from team_table ")
+        db = self.settings['db']
+        cursor = db.cursor()
+        cursor.execute(query)
+        result = cursor.fetchall()
+        if not result:
+            out = {
+                            "get_teams": {
+                                        "result": None,
+                                        "status":"fail"
+                                    }
+                        }
+        else:
+            out = {
+                            "get_teams": {
+                                        "result": result,
+                                        "status":"success"
+                                    }
+                        }
+        if out['get_teams']['status'] == 'fail':
+            self.set_status(400)
+            self.finish(out)
+        else:
+            self.write(json.dumps(out))
+            self.finish()
+
+
+class Get_Employees(tornado.web.RequestHandler):
+    @authentication_required
+    @tornado.web.asynchronous
+    @gen.engine
+    def get(self, decoded):
+        """
+        API to get Team details
+        """
+        query = ("SELECT * from employee_table ")
+        db = self.settings['db']
+        cursor = db.cursor()
+        cursor.execute(query)
+        result = cursor.fetchall()
+        if not result:
+            out = {
+                            "get_employees": {
+                                        "result": None,
+                                        "status":"fail"
+                                    }
+                        }
+        else:
+            out = {
+                            "get_employees": {
+                                        "result": result,
+                                        "status":"success"
+                                    }
+                        }
+        if out['get_employees']['status'] == 'fail':
+            self.set_status(400)
+            self.finish(out)
+        else:
+            self.write(json.dumps(out))
+            self.finish()
+
+
+class Get_Restaurants(tornado.web.RequestHandler):
+    @authentication_required
+    @tornado.web.asynchronous
+    @gen.engine
+    def get(self, decoded):
+        """
+        API to get Team details
+        """
+        query = ("SELECT * from restaurant_table ")
+        db = self.settings['db']
+        cursor = db.cursor()
+        cursor.execute(query)
+        result = cursor.fetchall()
+        if not result:
+            out = {
+                            "get_restaurants": {
+                                        "result": None,
+                                        "status":"fail"
+                                    }
+                        }
+        else:
+            out = {
+                            "get_restaurants": {
+                                        "result": result,
+                                        "status":"success"
+                                    }
+                        }
+        if out['get_restaurants']['status'] == 'fail':
+            self.set_status(400)
+            self.finish(out)
+        else:
+            self.write(json.dumps(out))
+            self.finish()
+
+
 configuraion = utils.read_from_configuration('config.yaml')
 db = utils.get_db_connection(configuraion)
 
@@ -580,6 +762,10 @@ application = tornado.web.Application([
     (r"/employee", Employee),
     (r"/restaurant", Restaurant),
     (r"/random_lunch", Random_lunch),
+    (r"/paid_lunch", Paid_lunch),
+    (r"/get_teams", Get_Teams),
+    (r"/get_employees", Get_Employees),
+    (r"/get_restaurants", Get_Restaurants),
 ], db=db)
 
 if __name__ == "__main__":

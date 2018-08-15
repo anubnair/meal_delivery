@@ -109,6 +109,54 @@ def random_lunch(arg):
     print(response.status, response.read())
 
 
+def paid_lunch(arg):
+    json_acceptable_string = arg.replace("'", "\"")
+    arg = json.loads(json_acceptable_string)
+    params = urllib.urlencode({'key': key, 'team_id': arg['team_id'],
+                                'total_budget': arg['total_budget']})
+    headers = {"Content-type": "application/x-www-form-urlencoded",
+               "Accept": "text/plain"}
+    conn = httplib.HTTPConnection("localhost", 8888)
+    conn.request("POST", "/paid_lunch", params, headers)
+    response = conn.getresponse()
+    print(response.status, response.read())
+
+
+def get_teams(arg):
+    json_acceptable_string = arg.replace("'", "\"")
+    arg = json.loads(json_acceptable_string)
+    params = urllib.urlencode({'key': key})
+    headers = {"Content-type": "application/x-www-form-urlencoded",
+               "Accept": "text/plain"}
+    conn = httplib.HTTPConnection("localhost", 8888)
+    conn.request("GET", "/get_teams", params, headers)
+    response = conn.getresponse()
+    print(response.status, response.read())
+
+
+def get_employees(arg):
+    json_acceptable_string = arg.replace("'", "\"")
+    arg = json.loads(json_acceptable_string)
+    params = urllib.urlencode({'key': key})
+    headers = {"Content-type": "application/x-www-form-urlencoded",
+               "Accept": "text/plain"}
+    conn = httplib.HTTPConnection("localhost", 8888)
+    conn.request("GET", "/get_employees", params, headers)
+    response = conn.getresponse()
+    print(response.status, response.read())
+
+
+def get_restaurants(arg):
+    json_acceptable_string = arg.replace("'", "\"")
+    arg = json.loads(json_acceptable_string)
+    params = urllib.urlencode({'key': key})
+    headers = {"Content-type": "application/x-www-form-urlencoded",
+               "Accept": "text/plain"}
+    conn = httplib.HTTPConnection("localhost", 8888)
+    conn.request("GET", "/get_restaurants", params, headers)
+    response = conn.getresponse()
+    print(response.status, response.read())
+
 if __name__ == '__main__':
 
     parser = optparse.OptionParser(usage="usage: %prog [options] filename",
@@ -133,6 +181,22 @@ if __name__ == '__main__':
                       dest="random_lunch",
                       help='Random Lunch for multiple employees',)
 
+    parser.add_option('-p', '--paid_lunch',
+                      dest="paid_lunch",
+                      help='Paid Lunch for multiple employees',)
+
+    parser.add_option('--get_teams',
+                      dest="get_teams",
+                      help='Get all Teams',)
+
+    parser.add_option('--get_employees',
+                      dest="get_employees",
+                      help='Get all Employees',)
+
+    parser.add_option('--get_restaurants',
+                      dest="get_restaurants",
+                      help='Get all Restaurants',)
+
     (options, args) = parser.parse_args()
 
     if options.menu:
@@ -145,3 +209,11 @@ if __name__ == '__main__':
         restaurant(options.restaurant)
     if options.random_lunch:
         random_lunch(options.random_lunch)
+    if options.paid_lunch:
+        paid_lunch(options.paid_lunch)
+    if options.get_teams:
+        get_teams(options.get_teams)
+    if options.get_employees:
+        get_employees(options.get_employees)
+    if options.get_restaurants:
+        get_restaurants(options.get_restaurants)
