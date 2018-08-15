@@ -6,6 +6,7 @@ sudo pip install nose
 
 sudo apt-get install python-mysql.connector
 sudo pip install pyyaml
+sudo apt-get install python-bson
 
 # mysql installation
 
