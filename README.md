@@ -5,6 +5,22 @@ Author: Anu B Nair <anubnair90@gmail.com>
 About:
 ------
 
++-----------------------------+     Response         +-----------------------+
+|        WebServer(Tornado)   <------------------+   |         Client        |
+|                             +----------------->    |                       |
++-----^-----------------------+     Request          +-----------------------+
+      ||
+      ||
+      ||
+      ||
+      ||
+      ||
++------v--------------+
+|                     |
+|      Mysql(DB)      |
++---------------------+
+
+
 This application is to manage the meal delivery of staff....
 
 Installation:
