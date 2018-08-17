@@ -11,6 +11,10 @@ How to use:
 -----------
 
 Terminal 1:
+----------
+python server.py
+
+Terminal 2:
 ------------
 Running client for API validation:
 
